@@ -1,0 +1,12 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "weison",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "koa": "^2.13.4",
+    "socket.io": "^4.5.2"
+  }
+}
