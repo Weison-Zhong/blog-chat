@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh_CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>chat</title>
+    <script crossorigin="anonymous"
+        integrity="sha512-xzC4RSo+4m1clLhr0pQr6yFjO9bJ0py6+l65SBibI8/pSEU8U4iVZ7xm95WRq8PXw2MKv8SSR3QkqR2jciG5Ug=="
+        src="https://lib.baomitu.com/socket.io/4.5.2/socket.io.min.js"></script>
+</head>
+
+<body>
+    <input type="text" id="test">
+    <button class="send" onclick="handleSendBtnClick()">send</button>
+    <script>
+        const socket = io("http://localhost:3002");
+        socket.on("connect", () => {
+            console.log("ok");
+        });
+        const id = Date.now();
+        const inputDom = document.getElementById("test");
+        function handleSendBtnClick() {
+            const { value } = inputDom;
+            const data = {
+                content: value,
+            };
+            console.log({ data });
+            socket.emit("sendMsgFromClient", data, (res) => {
+                console.log({ res });
+            });
+        }
+        socket.on("newUser", (data) => {
+            console.log("newUser client", data);
+        });
+        socket.on("newMsg", (data) => {
+            console.log("newMsg", data);
+        });
+    </script>
+</body>
+
+</html>
