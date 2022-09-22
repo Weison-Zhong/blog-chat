@@ -3,10 +3,12 @@ import { Action } from "./action";
 
 export interface IState {
     name: string,
+    visitors: string[],
     dispatch: React.Dispatch<Action>;
 }
 export const initialState = {
     name: 'weison',
+    visitors: [],
     dispatch: () => { }
 }
 export const globalContext = React.createContext<IState>(initialState);

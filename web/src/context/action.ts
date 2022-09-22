@@ -1,12 +1,17 @@
 export enum ActionTypes {
-    SetName = 'SetName'
+    SetName = 'SetName',
+    SetNewVisitor = 'SetNewVisitor'
 }
 
-export type SetName = {
+export interface SetName {
     name: string
+};
+
+export interface SetNewVisitorPayload {
+    newVisitor: string
 };
 
 export interface Action {
     type: ActionTypes;
-    payload: SetName;
+    payload: SetName | SetNewVisitorPayload;
 }

@@ -1,7 +1,11 @@
 import { ActionTypes } from "./context/action";
 import { useGlobalContext } from "./context";
+import GuestList from "./components/GuestList";
+import socket from "./socket";
+import { useEffect } from "react";
 function App() {
   const [context, dispatch] = useGlobalContext();
+  console.log({ socket });
   const handleClick = () => {
     dispatch({
       type: ActionTypes.SetName,
@@ -10,7 +14,10 @@ function App() {
       },
     });
   };
-  return <span onClick={handleClick}>name: {context?.name}</span>;
+  useEffect(() => {
+    socket.init(context);
+  });
+  return <GuestList />;
 }
 
 export default App;

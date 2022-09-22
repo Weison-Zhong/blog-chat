@@ -4,7 +4,6 @@ import App from "./App";
 import { ReactNode, useReducer } from "react";
 import { reducer } from "./context/reducer";
 import { initialState, globalContext } from "./context";
-
 interface IProps {
   children: ReactNode;
 }
