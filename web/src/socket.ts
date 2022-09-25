@@ -11,6 +11,14 @@ const socket = {
         context = globalContext;
         dipatch = globalContext.dispatch
         initSocket();
+    },
+    emit: function <T = any>(
+        eventName: string,
+        data = {},
+    ): Promise<[string | null, T | null]> {
+        return new Promise((resolve) => {
+            io.emit(eventName, data, (res: any) => resolve(res))
+        });
     }
 }
 //初始化socket.io并监听事件

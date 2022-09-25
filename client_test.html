@@ -14,6 +14,9 @@
 <body>
     <input type="text" id="test">
     <button class="send" onclick="handleSendBtnClick()">send</button>
+    <button onclick="handleTestBtnClick()">test</button>
+    <button onclick="handleLoginBtnClick()">login</button>
+    <button onclick="visitor()">visitor</button>
     <script>
         const socket = io("http://localhost:3002");
         socket.on("connect", () => {
@@ -37,6 +40,28 @@
         socket.on("newMsg", (data) => {
             console.log("newMsg", data);
         });
+        function handleTestBtnClick() {
+            socket.emit("register", {
+                username: 'test',
+                password: '123456'
+            }, (res) => {
+                console.log('注册', { res });
+            });
+        }
+        function handleLoginBtnClick() {
+            socket.emit("login", {
+                username: 'test',
+                password: '123456'
+            }, (res) => {
+                console.log('登录', { res });
+            });
+        }
+        function visitor() {
+            socket.emit("visitorOnline", {
+            }, (res) => {
+                console.log('访客', { res });
+            });
+        }
     </script>
 </body>
 
