@@ -15,12 +15,12 @@ export default function registerRoutes(socket, socketEvents) {
         socket: {
           id: socket.id,
           ip: getSocketIp(socket),
-          emit: (tar, _event, _data) => socket.to(tar).emit(_event, _data),
+          emit: (tar, _event, _data) => {
+            socket.to(tar).emit(_event, _data)
+          },
         },
       };
       const res = await eventCb(ctx);
-      console.log('res',res);
-      console.log('cb',cb);
       cb(res)
       isFn(cb) && cb(res);
     } catch (err) {}

@@ -1,14 +1,24 @@
 import React, { useContext } from "react";
 import { Action } from "./action";
 
+
+export interface IVisitor {
+    _id: string,
+    username: string,
+}
+
+
+
 export interface IState {
     name: string,
-    visitors: string[],
+    visitors: IVisitor[],
+    selectedVisitor:null | IVisitor,
     dispatch: React.Dispatch<Action>;
 }
 export const initialState = {
     name: 'weison',
     visitors: [],
+    selectedVisitor:null,
     dispatch: () => { }
 }
 export const globalContext = React.createContext<IState>(initialState);

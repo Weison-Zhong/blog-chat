@@ -93,12 +93,13 @@ export const login = async (ctx) => {
 //访客进入
 export const visitorOnline = async (ctx) => {
   const { socket, data } = ctx;
-  const ip = socket.ip;
+  // const ip = socket.ip;
+  const ip = Date.now();
   const { os, browser, environment } = data;
   let user = await User.findOne({ ip });
   if (user) {
     //已有访客重新上线
-    console.log("user", user);
+    // console.log("user", user);
   } else {
     //新访客
 
@@ -124,6 +125,12 @@ export const visitorOnline = async (ctx) => {
       lastLoginTime: Date.now,
     }
   );
+  const toUser = await User.findOne({ username: "123" });
+  console.log("toUser", toUser);
+  const tarSocket = (await Socket.find({ user: toUser._id })).map(
+    (item) => item.id
+  );
+  socket.emit(tarSocket, "newVisitor", user);
   return {
     _id: user._id,
     avatar: user.avatar,

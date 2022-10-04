@@ -6,7 +6,6 @@ import http from "http";
 import config from "./config.js";
 import mongoose from "mongoose";
 import { Server } from "socket.io";
-import logger from "./utils/logger.js";
 import { getSocketIp } from "./utils/index.js";
 import SocketModel from "./models/socket.js";
 import registerRoutes from "./middlewares/registerRoutes.js";
@@ -47,46 +46,26 @@ const io = new Server(httpServer, {
 });
 let count = 1;
 let adminId = null;
+
+//新设备接入socket
 io.on("connection", async (socket) => {
   const ip = getSocketIp(socket);
-  logger.trace(`connection ${socket.id} ${ip}`);
+  console.log('服务端，新设备接入，IP是',ip,'id是',socket.id);
+  //往socket表中插入这个新设备
   await SocketModel.create({
     id: socket.id,
     ip,
   });
 
   socket.on("disconnect", async () => {
-    logger.trace(`disconnect ${socket.id}`);
+    //设备离线，往socket表中删除这个设备
     await SocketModel.deleteOne({
       id: socket.id,
     });
   });
   //这里没有传统的http协议接口，而是用socket,io的事件机制派发路由
   socket.use(registerRoutes(socket, socketEvents));
-  /*   下面是旧代码
-  console.log("server:连接成功", id);
-  !adminId && (adminId = id);
-  console.log({ adminId });
-  socket.to(adminId).emit("newUser", {
-    id: socket.id,
-    num: count,
-  });
-  count++;
-  socket.on("sendMsgFromClient", function (data, cb) {
-    const { content } = data;
-    socket.to(adminId).emit("newMsg", {
-      from: id,
-      content,
-    });
-  });
-  socket.on("sendMsgFromAdmin", function (data, cb) {
-    console.log({ data });
-    const { from, to, content } = data;
-    socket.to(to).emit("newMsg", {
-      from,
-      content,
-    });
-  }); */
+
 });
 httpServer.listen(3002, async () => {
   await SocketModel.deleteMany({}); // 删除Socket表所有历史数据

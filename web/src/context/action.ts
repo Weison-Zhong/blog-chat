@@ -1,17 +1,13 @@
+import { IVisitor } from './index'
 export enum ActionTypes {
-    SetName = 'SetName',
-    SetNewVisitor = 'SetNewVisitor'
+    SetNewVisitor = 'SetNewVisitor',
+    SetSelectedVisitor = 'SetSelectedVisitor'
 }
 
-export interface SetName {
-    name: string
-};
-
-export interface SetNewVisitorPayload {
-    newVisitor: string
-};
-
+// export interface SetName {
+//     name: string
+// };
 export interface Action {
     type: ActionTypes;
-    payload: SetName | SetNewVisitorPayload;
+    payload: IVisitor;
 }
