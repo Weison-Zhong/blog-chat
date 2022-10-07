@@ -1,8 +1,7 @@
 import React from "react";
-import { useGlobalContext } from "../../context";
-import { IVisitor } from "../../context";
+import { useGlobalContext, IVisitor } from "@/context";
 import { ActionTypes } from "@/context/action";
-import "./index.less";
+
 export default function GuestList() {
   const [context, dispatch] = useGlobalContext();
   const { visitors, selectedVisitor } = context;

@@ -40,9 +40,6 @@ export const register = async (ctx) => {
     { id: socket.id },
     {
       user: newUser._id,
-      os,
-      browser,
-      environment,
     }
   );
   return {
@@ -77,9 +74,6 @@ export const login = async (ctx) => {
     { id: socket.id },
     {
       user: user._id,
-      os,
-      browser,
-      environment,
     }
   );
   return {
@@ -91,50 +85,65 @@ export const login = async (ctx) => {
 };
 
 //访客进入
-export const visitorOnline = async (ctx) => {
+export const visitorEnter = async (ctx) => {
   const { socket, data } = ctx;
-  // const ip = socket.ip;
-  const ip = Date.now();
-  const { os, browser, environment } = data;
-  let user = await User.findOne({ ip });
+  const ip = socket.ip;
+  let { token } = data;
+  console.log("token", token, typeof token);
+  let user = null;
+  //1,有token则先判断token找出已有访客
+  if (token) {
+    console.log("不应该");
+    const testRes = jwt.decode(token, config.jwtSecret);
+  console.log({testRes});
+    const { expires, user: userId } = jwt.decode(token, config.jwtSecret);
+    if (Date.now() > expires) {
+      //若token过期了则按ip判断
+      console.log('过期了吗？？？？？？？？？？？');
+      user = await User.findOne({ ip });
+    } else {
+      user = await User.findOne({ _id: userId });
+    }
+  } else {
+    //2，若没有token则判断ip
+    // user = await User.findOne({ ip });
+  }
+  console.log("here?????????", user);
   if (user) {
     //已有访客重新上线
-    // console.log("user", user);
+    console.log("已有访客重新上线", user);
   } else {
+    console.log("else?");
     //新访客
-
     const total = await User.countDocuments();
-    try {
-      user = await User.create({
-        username: `访客${total + 1}`,
-        avatar: "",
-        ip,
-      });
-    } catch (err) {
-      console.log(err);
-    }
+    console.log({ total });
+    user = await User.create({
+      username: `访客${total + 1}`,
+      avatar: "",
+      ip,
+    });
+    token = generateToken(user._id.toString());
   }
+  //更新这个设备socket表的user字段
   socket.user = user._id.toString();
   await Socket.updateOne(
     { id: socket.id },
     {
       user: user._id,
-      os,
-      browser,
-      environment,
-      lastLoginTime: Date.now,
     }
   );
+  //发送事件给管理平台
   const toUser = await User.findOne({ username: "123" });
-  console.log("toUser", toUser);
   const tarSocket = (await Socket.find({ user: toUser._id })).map(
     (item) => item.id
   );
-  socket.emit(tarSocket, "newVisitor", user);
+  socket.emit(tarSocket, "visitorEnterFromServer", user);
+
   return {
     _id: user._id,
     avatar: user.avatar,
     username: user.username,
+    token,
   };
 };
 

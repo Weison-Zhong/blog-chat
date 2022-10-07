@@ -10,6 +10,7 @@ import { getSocketIp } from "./utils/index.js";
 import SocketModel from "./models/socket.js";
 import registerRoutes from "./middlewares/registerRoutes.js";
 import * as userEvents from "./socketEvents/userEvent.js";
+import * as messageEvents from "./socketEvents/messageEvent.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = new Koa();
@@ -33,6 +34,7 @@ app.use(
 
 const socketEvents = {
   ...userEvents,
+  ...messageEvents
 };
 
 const httpServer = http.createServer(app.callback());
@@ -58,6 +60,8 @@ io.on("connection", async (socket) => {
   });
 
   socket.on("disconnect", async () => {
+    //发送事件给管理平台告知其某用户断开下线
+    // socket.to()
     //设备离线，往socket表中删除这个设备
     await SocketModel.deleteOne({
       id: socket.id,

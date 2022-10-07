@@ -1,13 +1,81 @@
-body {
+/* 统一去除内外边距 */
+html,
+body,
+p,
+ol,
+ul,
+li,
+dl,
+dt,
+dd,
+blockquote,
+figure,
+fieldset,
+legend,
+textarea,
+pre,
+iframe,
+hr,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  padding: 0;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+/* 统一使用IE盒模型 */
+html,
+body,
+div,
+section,
+header,
+footer,
+ul,
+li,
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  box-sizing: border-box;
+}
+
+ul {
+  list-style: none;
+}
+
+body {
+  font-family: -apple-system, "Arial", "Microsoft YaHei", "黑体", "宋体",
+    sans-serif;
+  overflow-x: hidden;
+}
+
+#root,
+.app {
+  width: 100vw;
+  height: 100vh;
+}
+html {
+  font-size: 20px;
+}
+@media (max-width: 1080px) {
+  html {
+    font-size: 18px;
+  }
+}
+@media (max-width: 992px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  html {
+    font-size: 14px;
+  }
 }

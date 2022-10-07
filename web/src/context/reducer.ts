@@ -1,6 +1,6 @@
 import { Action, ActionTypes } from './action'
 
-import { IState, IVisitor } from './index'
+import { IState, IVisitor, IMessage } from './index'
 export const reducer = (state: IState, action: Action): IState => {
     switch (action.type) {
         case ActionTypes.SetNewVisitor: {
@@ -11,10 +11,16 @@ export const reducer = (state: IState, action: Action): IState => {
             }
         }
         case ActionTypes.SetSelectedVisitor: {
-            const setSelectedVisitor = action.payload as IVisitor
+            const selectedVisitor = action.payload as IVisitor | null
             return {
                 ...state,
-                selectedVisitor: setSelectedVisitor
+                selectedVisitor
+            }
+        }
+        case ActionTypes.SetSocketStatus: {
+            return {
+                ...state,
+                isSocketReady: action.payload as boolean
             }
         }
         default:

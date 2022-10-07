@@ -7,18 +7,24 @@ export interface IVisitor {
     username: string,
 }
 
-
+export interface IMessage {
+    id: string;
+    to: string;
+    content: string;
+}
 
 export interface IState {
     name: string,
     visitors: IVisitor[],
-    selectedVisitor:null | IVisitor,
+    selectedVisitor: null | IVisitor,
+    isSocketReady: boolean,
     dispatch: React.Dispatch<Action>;
 }
 export const initialState = {
     name: 'weison',
     visitors: [],
-    selectedVisitor:null,
+    selectedVisitor: null,
+    isSocketReady: false,
     dispatch: () => { }
 }
 export const globalContext = React.createContext<IState>(initialState);
