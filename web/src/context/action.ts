@@ -1,6 +1,7 @@
 import { IVisitor, IMessage } from './index'
 export enum ActionTypes {
     SetNewVisitor = 'SetNewVisitor',
+    SetVisitors = 'SetVisitors',
     SetSelectedVisitor = 'SetSelectedVisitor',
     SetSocketStatus = 'SetSocketStatus'
 }
@@ -10,5 +11,5 @@ export enum ActionTypes {
 // };
 export interface Action {
     type: ActionTypes;
-    payload: null | boolean | IVisitor | IMessage;
+    payload: null | boolean | IVisitor | IVisitor[] | IMessage;
 }

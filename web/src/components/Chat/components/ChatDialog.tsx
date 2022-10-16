@@ -6,6 +6,7 @@ import { useGlobalContext, IMessage } from "@/context";
 import { ActionTypes } from "@/context/action";
 const robotIconUrl = "http://www.weison-zhong.cn/upload/icon-robot.png";
 let isShowTyping = true; //当管理员在线时关闭
+let totalMsg = 0;
 const initialMessages = [
   {
     type: "text",
@@ -39,7 +40,8 @@ const defaultQuickReplies = [
 
 export default function () {
   // 消息列表
-  const { messages, appendMsg, setTyping } = useMessages(initialMessages);
+  const { messages, appendMsg, setTyping, prependMsgs } =
+    useMessages(initialMessages);
   const [context, dispatch] = useGlobalContext();
   const { selectedVisitor, isSocketReady } = context;
   // 发送回调
@@ -104,7 +106,43 @@ export default function () {
         return null;
     }
   }
+  const fetchHistoryMsg = async (startNum: number = -1) => {
+    const res = await socket.emit("getVisitorHistoryMessages", {
+      visitorId: selectedVisitor?._id,
+      startNum,
+      pageSize: 10,
+    });
+    console.log("historyMsg", res);
+    const { data, code } = res;
+    if (code === 1) {
+      const { messages, total } = data || {};
+      totalMsg = total - 10;
+      const format = messages.map((item: any) => ({
+        _id: item._id,
+        type: "text",
+        content: {
+          text: item.content,
+        },
+        position: selectedVisitor?._id === item.to ? "right" : "left",
+        user: {
+          avatar: robotIconUrl,
+        },
+      }));
+      prependMsgs(format);
+      // messages.forEach((item: any) => {
+      //   appendMsg({
+      //     type: "text",
+      //     position: selectedVisitor?._id === item.to ? "right" : "left",
+      //     content: { text: item.content },
+      //     user: {
+      //       avatar: robotIconUrl,
+      //     },
+      //   });
+      // });
+    }
+  };
   useEffect(() => {
+    fetchHistoryMsg();
     console.log("ready", isSocketReady);
     io?.on("newMessage", (data: any) => {
       console.log("newMessage", data);
@@ -112,11 +150,38 @@ export default function () {
         type: "text",
         content: { text: data.content },
         user: {
-          avatar: "http://www.weison-zhong.cn:8080/static/media/logo.91b21a28f2ecb6259831.png",
+          avatar:
+            "http://www.weison-zhong.cn:8080/static/media/logo.91b21a28f2ecb6259831.png",
         },
       });
     });
   }, []);
+  async function handleFresh() {
+    console.log("handleFresh");
+    const startNum = totalMsg - 10 - 1;
+    totalMsg -= 10;
+    const res = await socket.emit("getVisitorHistoryMessages", {
+      visitorId: selectedVisitor?._id,
+      startNum,
+      pageSize: 10,
+    });
+    console.log('fetch',res.data);
+    return new Promise((resolve) => {
+      const format = res.data.messages.map((item: any) => ({
+        _id: item._id,
+        type: "text",
+        content: {
+          text: item.content,
+        },
+        position: selectedVisitor?._id === item.to ? "right" : "left",
+        user: {
+          avatar: robotIconUrl,
+        },
+      }));
+      prependMsgs(format);
+      resolve({});
+    });
+  }
   return (
     <Chat
       navbar={{
@@ -133,6 +198,8 @@ export default function () {
         },
       }}
       messages={messages}
+      loadMoreText="加载更多真的吗"
+      onRefresh={handleFresh}
       renderMessageContent={renderMessageContent}
       quickReplies={defaultQuickReplies}
       onQuickReplyClick={handleQuickReplyClick}

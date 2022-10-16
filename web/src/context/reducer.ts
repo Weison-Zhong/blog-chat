@@ -10,6 +10,13 @@ export const reducer = (state: IState, action: Action): IState => {
                 visitors: [...state.visitors, newVisitor]
             }
         }
+        case ActionTypes.SetVisitors: {
+            const visitors = action.payload as IVisitor[]
+            return {
+                ...state,
+                visitors
+            }
+        }
         case ActionTypes.SetSelectedVisitor: {
             const selectedVisitor = action.payload as IVisitor | null
             return {

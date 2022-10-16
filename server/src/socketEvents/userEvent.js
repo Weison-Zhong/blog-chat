@@ -95,11 +95,11 @@ export const visitorEnter = async (ctx) => {
   if (token) {
     console.log("不应该");
     const testRes = jwt.decode(token, config.jwtSecret);
-  console.log({testRes});
+    console.log({ testRes });
     const { expires, user: userId } = jwt.decode(token, config.jwtSecret);
     if (Date.now() > expires) {
       //若token过期了则按ip判断
-      console.log('过期了吗？？？？？？？？？？？');
+      console.log("过期了吗？？？？？？？？？？？");
       user = await User.findOne({ ip });
     } else {
       user = await User.findOne({ _id: userId });
@@ -146,7 +146,18 @@ export const visitorEnter = async (ctx) => {
     token,
   };
 };
-
+//获取在线访客
+export const getOnlineVisitors = async (ctx) => {
+  console.log("getOnlineVisitors");
+  const onlineUsers = await (await Socket.find({}).populate("user"))
+    .map((item) => item.user)
+    .filter((user) => user && user.username.includes("访客"));
+  return {
+    code: 1,
+    msg: "操作成功",
+    data: onlineUsers,
+  };
+};
 function generateToken(user) {
   return jwt.encode(
     {

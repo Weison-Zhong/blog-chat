@@ -15,13 +15,21 @@ export default function registerRoutes(socket, socketEvents) {
         socket: {
           id: socket.id,
           ip: getSocketIp(socket),
+          get user() {
+            console.log('getUser',socket.data);
+            return socket.data.user;
+          },
+          set user(newUserId) {
+            console.log('setUser',newUserId);
+            socket.data.user = newUserId;
+          },
           emit: (tar, _event, _data) => {
-            socket.to(tar).emit(_event, _data)
+            socket.to(tar).emit(_event, _data);
           },
         },
       };
       const res = await eventCb(ctx);
-      cb(res)
+      cb(res);
       isFn(cb) && cb(res);
     } catch (err) {}
   };
